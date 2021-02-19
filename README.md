@@ -189,7 +189,7 @@ Notes from book club, using a Kotlin point-of-view.
    Only `A` is a pure function. B relies on state from `stdin`, C produces a side effect `std::cout`, and D does both by
    producing a side effect `y += x` and relying on state `static int y`
 5. How many different functions are there from Bool to Bool? Can you implement them all?  
-   Four different functions exist.
+   Four different functions exist. Or is it two because always true / false is `() -> Boolean`?
    ```kotlin
    val identityBoolean: (Boolean) -> Boolean = { it }
    val inverseBoolean: (Boolean) -> Boolean = { !it }
