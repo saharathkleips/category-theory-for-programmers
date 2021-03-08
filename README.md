@@ -2,7 +2,7 @@
 
 Notes from book club, using a Kotlin point-of-view.
 
-## Category: The Essence of Composition
+## [Chapter 1] Category: The Essence of Composition
 
 - `Morphisms` can be thought of as "arrows" or functions
     - `f = A => B` and `g = B => C`, therefore you can write a function that composes `f` and `g` to get `A => C`
@@ -77,7 +77,7 @@ Notes from book club, using a Kotlin point-of-view.
    You need each node to have an edge back to itself and for each node it connects to, we also need connections to that
    node's connections.
 
-## Types and Functions
+## [Chapter 2] Types and Functions
 
 - Category theory is about composing arrows, the target of one arrow is the source of another
 - "It’s a common practice in Haskell to start a project by designing the types."
@@ -200,3 +200,77 @@ Notes from book club, using a Kotlin point-of-view.
    all possible functions between these types. Label the arrows with the names of the functions.  
    https://excalidraw.com/#json=5715022994997248,VBDtz-52M7fFKMFlqwqFXQ  
    ![img](2-6.png)
+
+## [Chapter 3] Categories Great and Small
+
+- The empty category is one with zero objects and zero morphisms
+- "Every time you add a new arrow, you have to also consider its composition with any other arrow (except for the
+  identity arrows) and itself. You usually end up with infinitely many arrows, but that’s okay."
+- This kind of category is called a "free category"
+- If `𝑎 ⩽ 𝑏` and `𝑏 ⩽ 𝑐` then `𝑎 ⩽ 𝑐` then this set is called a "preorder" and is a category
+    - Additionally, if `𝑎 ⩽ 𝑏` and `𝑏 ⩽ 𝑎` then `𝑎 == 𝑏`, this is called "partial order"
+    - If any two objects are in relation with each other, this is a "linear order" or "total order"
+- Preorder: Category where there is at most one morphism going from any object a to any object b
+    - This is a "thin category"
+- A set of morphisms from object _a_ to object _b_ in a category C is called a "hom-set"
+    - Written as `𝐂(𝑎, 𝑏)` or `Hom𝐂(𝑎, 𝑏)`
+    - Every hom-set in a preorder is empty or a singleton
+        - `C(a,a)` is a singleton, it only contains the identity morphism
+    - Cycles are allowed in a preorder, but forbidden in a partial order
+- Orders are important because of sorting. Algos like quicksort, mergesort, etc only work on total orders
+    - Partial orders can be sorted with something like topological sort
+- Classically, a "monoid" is a set with a binary operation
+    - The only requirement is that it is associative, and there is one element that behaves like unit
+    - Natural numbers from zero are a monoid under addition: (a+b)+c = a+(b+c)
+    - No requirement to be communicative - string concatenation is a monoid (neutral element is empty string)
+    - Haskell has a type class for monoids. The neutral element is called `mempty` and the binary operation is
+      called `mappend`
+      ```haskell
+      class Monoid m where 
+        mempty :: m
+        mappend :: m -> m -> m
+      ```
+    - The example of a String monoid
+      ```haskell
+      instance Monoid String where
+        mempty = ""
+        mappend = (++)
+      ```
+- Think of monoids as objects and morphisms where the binary operator moves things around the set
+    - Ex. Adding 5 to every natural number, 0 to 5, 1 to 6, 2 to 7
+    - For every natural number n there is a function of adding n, "the adder"
+        - These adders compose, a function adding 5 composed with a function adding 7 adds 12.
+- A monoid is a single object category
+    - Think of the natural numbers as a single object with a bunch of morphisms (adders)
+    - The source and target of these morphisms are the same object - natural number adders produce more natural numbers
+
+### Challenges
+
+1. Generate a free category from:  
+   A. A graph with one node and no edges.  
+   Add an identity arrow for the one node to itself.  
+   B. A graph with one node and one (directed) edge (hint: this edge can be composed with itself)  
+   Every node needs an identity arrow to itself, and since the edge can be composed with itself, we can have infinitely
+   many composed morphisms.  
+   C. A graph with two nodes and a single arrow between them.  
+   Add an identity arrow for each node.  
+   D. A graph with a single node and 26 arrows marked with the letters of the alphabet: a, b, c ... z.  
+   Each node needs an identity arrow to itself - this will have infinitely many arrows
+2. What kind of order is this:  
+   A. A set of sets with the inclusion relation: 𝐴 is included in 𝐵 if every element of 𝐴 is also an element of 𝐵.  
+   Preorder  
+   B. C++ types with the following subtyping relation: T1 is a subtype of T2 if a pointer to T1 can be passed to a
+   function that expects a pointer to T2 without triggering a compilation error.  
+   TODO
+3. Considering that Bool is a set of two values True and False, show that it forms two (set-theoretical) monoids with
+   respect to, respectively, operator && (AND) and || (OR).  
+   We need to have associativity and the special element. Both && and || are associative: (a && b) && c = a && (b && c),
+   (a || b) || c = a || (b || c). "True" is the special element for &&, and "False" is the special element for ||.
+4. Represent the Bool monoid with the AND operator as a category: List the morphisms and their rules of composition.
+    - id = (AND True)
+    - id . (AND False) = (AND False)
+    - (AND False) . (AND False) = (AND False)
+    - (AND False) . id = (AND False)
+    - id . id = id
+5. Represent addition modulo 3 as a monoid category.  
+    TODO()
